@@ -8,6 +8,21 @@
     <artifactId>RestAPIAutomationFramework</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.3</version>
+                <configuration>
+                    <suiteXmlFiles>
+                        <suiteXmlFile>testng.xml</suiteXmlFile>
+                    </suiteXmlFiles>
+                </configuration>
+            </plugin>
+        </plugins>
+
+    </build>
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
@@ -17,7 +32,7 @@
         <jacksonVersion>2.14.1</jacksonVersion>
         <googleGsonVersion>2.10</googleGsonVersion>
         <extentReportVersion>5.0.9</extentReportVersion>
-        <javafakerVersion>1.0.2</javafakerVersion>
+        <datafakerVersion>1.8.0</datafakerVersion>
         <lombokVersion>1.18.24</lombokVersion>
         <apacheCommonVersion>3.12.0</apacheCommonVersion>
     </properties>
@@ -48,9 +63,9 @@
             <version>${extentReportVersion}</version>
         </dependency>
         <dependency>
-            <groupId>com.github.javafaker</groupId>
-            <artifactId>javafaker</artifactId>
-            <version>1.0.2</version>
+            <groupId>net.datafaker</groupId>
+            <artifactId>datafaker</artifactId>
+            <version>${datafakerVersion}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

@@ -3,16 +3,22 @@ package gorest;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.poiji.bind.Poiji;
 import gorest.pojos.GoRest;
+import gorest.pojos.GorestPoiji;
 import io.restassured.response.Response;
 import org.testng.Assert;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import restUtils.AssertionUtils;
 import restUtils.RestUtils;
+import utils.ExcelUtils;
 import utils.JsonUtils;
+import utils.RandomDataGenerator;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class GorestTest extends GorestAPIs{
 
@@ -56,4 +62,60 @@ public class GorestTest extends GorestAPIs{
         //To get the Javers interface instance we need to write the below code.
         //Javers javers=JaversBuilder().javers().build();
     }
+
+    @DataProvider(name="gorestData")
+    public Iterator<GoRest> getCreateGorestUserData() throws IOException {
+        List<LinkedHashMap<String,String>> excelDataAsListOfMap= ExcelUtils.getExcelDataAsListOfMap("PayloadExcel","Sheet1");
+        List<GoRest> goRestData=new ArrayList<>();
+        for (LinkedHashMap<String,String> data:excelDataAsListOfMap){
+            GoRest goRest=GoRest.builder()
+                    .name(data.get("name"))
+                    .gender(data.get("gender"))
+                    .email(data.get("email"))
+                    .email(data.get("status"))
+                    .build();
+            goRestData.add(goRest);
+        }
+        return goRestData.iterator();
+    }
+    @Test(dataProvider = "gorestData")
+    public void createGoRestDataAndCVerify(GoRest goRest){
+
+        Response response=createUser(goRest);
+        Map<String,Object> expectedValueMap=new HashMap<>();
+        expectedValueMap.put("name",goRest.getName());
+        expectedValueMap.put("gender",goRest.getGender());
+        expectedValueMap.put("email",goRest.getEmail());
+        expectedValueMap.put("status",goRest.getStatus());
+        AssertionUtils.assertExpectedValuesWithJsonPath(response,expectedValueMap);
+    }
+
+    @DataProvider(name="gorestDataPoiji")
+    public Iterator<GoRest> getCreateGorestUserDataPoiji() throws IOException {
+        List<GoRest> data= Poiji.fromExcel(new File("src/test/resources/testData/PayloadExcel.xlsx"), GoRest.class);
+        return data.iterator();
+    }
+    @Test(dataProvider = "gorestDataPoiji")
+    public void createGoRestDataAndCVerifyPoiji(GoRest goRest) {
+
+        //This code is used to generate the random data
+       /* //String cellValue=goRest.getId();
+        String cellValue = goRest.getName();
+        int size = 6;
+        if (cellValue.contains("RandomNumber")){
+        if (cellValue.contains("_")) {
+            size = Integer.parseInt(cellValue.split("_")[1]);
+        }
+        cellValue = RandomDataGenerator.getRandomNumber(size);
+    }
+        goRest.setName(Integer.parseInt(cellValue));*/
+        Response response=createUser(goRest);
+        Map<String,Object> expectedValueMap=new HashMap<>();
+        expectedValueMap.put("name",goRest.getName());
+        expectedValueMap.put("gender",goRest.getGender());
+        expectedValueMap.put("email",goRest.getEmail());
+        expectedValueMap.put("status",goRest.getStatus());
+        AssertionUtils.assertExpectedValuesWithJsonPath(response,expectedValueMap);
+    }
+
 }

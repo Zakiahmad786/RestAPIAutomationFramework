@@ -24,4 +24,7 @@ public class RandomDataGenerator {
                 return "Data is not present";
         }
     }
+    public static String getRandomNumber(int size){
+        return faker.number().digits(6);
+    }
 }
